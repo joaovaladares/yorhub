@@ -27,6 +27,7 @@ library
   exposed-modules:
       Config
       GH.Auth
+      GH.User
       State
       UI.App
   other-modules:
