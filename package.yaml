@@ -1,10 +1,10 @@
 name:                yorhub
 version:             0.1.0.0
-github:              "githubuser/yorhub"
+github:              "joaovaladares/yorhub"
 license:             GPL-3.0-only
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2025 Author name here"
+author:              "Joao Valadares"
+maintainer:          "joaovvaladares1@gmail.com"
+copyright:           "2025 Joao Valadares"
 
 extra-source-files:
 - README.md
