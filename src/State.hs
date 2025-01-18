@@ -12,17 +12,18 @@ module State (
     tokenInput,
     repoInput,
     username,
-    isAuthenticated,
 ) where
 
 import qualified Brick.Widgets.Edit as E
 import qualified Data.Text as T
 import qualified GitHub.Auth as GH
+
 import Lens.Micro.TH (makeLenses)
+import UI.Types
 
 data Screen
     = AuthScreen -- Token input
-    | RepoScreen
+    | RepoSelectionScreen -- Repo input
     deriving (Eq, Show)
 
 data AuthError
@@ -41,8 +42,8 @@ data AuthStatus
 data AppState = AppState
     { _authStatus :: AuthStatus
     , _currentScreen :: Screen
-    , _tokenInput :: E.Editor T.Text ()
-    , _repoInput :: E.Editor T.Text ()
+    , _tokenInput :: E.Editor T.Text Name
+    , _repoInput :: E.Editor T.Text Name
     , _username :: Maybe T.Text
     }
 makeLenses ''AppState
@@ -52,11 +53,7 @@ initialState =
     AppState
         { _authStatus = NotAuthenticated
         , _currentScreen = AuthScreen
-        , _tokenInput = E.editor () (Just 1) ""
-        , _repoInput = E.editor () (Just 1) ""
+        , _tokenInput = E.editor TokenEditor (Just 1) ""
+        , _repoInput = E.editor RepoEditor (Just 1) ""
         , _username = Nothing
         }
-
-isAuthenticated :: AuthStatus -> Bool
-isAuthenticated (Authenticated _) = True
-isAuthenticated _ = False

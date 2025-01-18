@@ -30,6 +30,10 @@ library
       GH.User
       State
       UI.App
+      UI.Screens.AuthScreen
+      UI.Screens.RepoSelectionScreen
+      UI.Types
+      UI.Widgets.CommandBar
   other-modules:
       Paths_yorhub
   autogen-modules:
