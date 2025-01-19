@@ -8,6 +8,7 @@ import qualified Data.ByteString as BS
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8, encodeUtf8)
 import qualified System.Directory as Dir
+import System.Directory.Internal.Prelude (hPutStrLn, lookupEnv, stderr)
 import System.FilePath (takeDirectory, (</>))
 
 newtype Config = Config
@@ -28,8 +29,15 @@ saveToken token = do
 
 loadToken :: IO (Maybe T.Text)
 loadToken = do
-    configPath <- getConfigPath
-    exists <- Dir.doesFileExist configPath
-    if exists
-        then Just . decodeUtf8 <$> BS.readFile configPath
-        else return Nothing
+    -- Allow the user to override the token with an environment variable
+    envToken <- fmap T.pack <$> lookupEnv "GITHUB_TOKEN"
+    case envToken of
+        Just token -> return $ Just token
+        Nothing -> do
+            configPath <- getConfigPath
+            exists <- Dir.doesFileExist configPath
+            if exists
+                then do
+                    hPutStrLn stderr "Loading token from config file..."
+                    Just . decodeUtf8 <$> BS.readFile configPath
+                else return Nothing
