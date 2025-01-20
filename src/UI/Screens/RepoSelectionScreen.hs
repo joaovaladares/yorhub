@@ -11,6 +11,8 @@ import qualified Brick.Widgets.Edit as E
 import qualified Data.Text as T
 import qualified Graphics.Vty as V
 
+import Control.Monad.IO.Class (MonadIO (liftIO))
+import GH.Repo (RepoError (InvalidRepoFormat, RepoAccessError), getRepository)
 import Lens.Micro ((^.))
 import State
 import UI.Types
@@ -47,9 +49,21 @@ handleRepoSelectionScreen (V.EvKey V.KEnter []) = do
     st <- B.get
     let repoPath = T.concat $ E.getEditContents $ st ^. repoInput
     case T.splitOn "/" repoPath of
-        [_, _] -> do
-            -- Validate and open repository view
-            return ()
-        _ -> return () -- TODO: Show error for invalid format
+        [owner, repo] -> do
+            B.modify $ \s -> s{_repoStatus = Loading}
+            case st ^. authStatus of
+                Authenticated auth -> do
+                    res <- liftIO $ getRepository auth owner repo
+                    case res of
+                        Left err ->
+                            B.modify $ \s -> s{_repoStatus = LoadFailed (RepoAccessError (show err))}
+                        Right repoInfo -> do
+                            B.modify $ \s ->
+                                s
+                                    { _repoStatus = Loaded repoInfo
+                                    , _currentScreen = RepoDetailScreen
+                                    }
+                _ -> return ()
+        _ -> B.modify $ \s -> s{_repoStatus = LoadFailed InvalidRepoFormat}
 handleRepoSelectionScreen ev =
     B.zoom repoInput $ E.handleEditorEvent (B.VtyEvent ev)

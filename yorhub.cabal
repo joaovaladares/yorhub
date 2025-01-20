@@ -29,10 +29,13 @@ library
       Config
       GH.Auth
       GH.Error
+      GH.Repo
       GH.User
       State
       UI.App
+      UI.Ascii
       UI.Screens.AuthScreen
+      UI.Screens.RepoDetailScreen
       UI.Screens.RepoSelectionScreen
       UI.Types
       UI.Widgets.CommandBar

@@ -16,3 +16,5 @@ drawCommandBar st =
                     B.str "ENTER: Authenticate │ ESC: Quit"
                 RepoSelectionScreen ->
                     B.str "ENTER: Open Repo │ ESC: Quit"
+                RepoDetailScreen ->
+                    B.str "q: Quit"
